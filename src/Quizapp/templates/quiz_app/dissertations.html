@@ -1,0 +1,1250 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuteur IA - KandidaX</title>
+    <link rel="icon" type="image/png" href="{% static 'quiz_app/logo-kandidax.png' %}">
+    <link rel="stylesheet" href="{% static 'quiz_app/plateforme.css' %}?v=20260425">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .header {
+            width: 100%;
+            left: 0;
+            right: 0;
+        }
+
+        .dissertations-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: calc(100vh - 70px);
+            gap: 0;
+        }
+
+        .diss-sidebar {
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .diss-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .btn-new-conv {
+            background: var(--blue);
+            color: white;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.25s ease;
+        }
+
+        .btn-new-conv:hover {
+            background: var(--blue-dark);
+        }
+
+        .diss-conversations {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .conv-item {
+            padding: 12px 16px;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .conv-item:hover {
+            background: var(--gray-50);
+        }
+
+        .conv-item.active {
+            background: var(--blue);
+            color: white;
+            border-left-color: var(--green);
+        }
+
+        .conv-item-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .conv-item-date {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .conv-item-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .conv-item-actions button {
+            flex: 1;
+            padding: 4px 8px;
+            font-size: 11px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .btn-edit {
+            background: var(--gray-300);
+            color: var(--gray-800);
+        }
+
+        .conv-item.active .btn-edit {
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .diss-content {
+            display: flex;
+            flex-direction: column;
+            background: var(--gray-50);
+        }
+
+        .diss-chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        .user .message-content {
+            background: var(--blue);
+            color: white;
+        }
+
+        .assistant .message-content {
+            background: white;
+            color: var(--gray-800);
+            border: 1px solid var(--gray-200);
+        }
+
+        .diss-input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-300);
+            background: white;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.25s ease;
+        }
+
+        .action-btn:hover,
+        .action-btn.active {
+            background: var(--blue);
+            color: white;
+            border-color: var(--blue);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .diss-textarea {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 60px;
+            max-height: 150px;
+        }
+
+        .btn-send {
+            background: var(--green);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.25s ease;
+        }
+
+        .btn-send:hover {
+            background: var(--green-dark);
+        }
+
+        .btn-send:disabled {
+            background: var(--gray-400);
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--gray-300);
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 900px) {
+            .dissertations-container {
+                grid-template-columns: 1fr;
+                height: calc(100vh - 64px);
+            }
+
+            .diss-sidebar {
+                display: flex;
+                border-right: none;
+                border-bottom: 1px solid var(--gray-200);
+                max-height: 190px;
+            }
+
+            .diss-header {
+                padding: 10px 12px;
+            }
+
+            .btn-new-conv {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .diss-conversations {
+                display: flex;
+                gap: 10px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                padding: 10px 12px 12px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .conv-item {
+                min-width: 220px;
+                max-width: 220px;
+                border: 1px solid var(--gray-200);
+                border-left-width: 3px;
+                border-radius: 8px;
+                background: white;
+                flex-shrink: 0;
+            }
+
+            .message-content {
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dissertations-container {
+                height: calc(100vh - 58px);
+            }
+
+            .diss-chat {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .message {
+                gap: 8px;
+            }
+
+            .message-content {
+                max-width: 100%;
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+
+            .diss-input-area {
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .action-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 2px;
+            }
+
+            .action-btn {
+                white-space: nowrap;
+                flex-shrink: 0;
+                font-size: 11px;
+                padding: 8px 10px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .diss-textarea {
+                width: 100%;
+                min-height: 90px;
+                max-height: 180px;
+                font-size: 16px;
+            }
+
+            .btn-send {
+                width: 100%;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .diss-sidebar {
+                max-height: 170px;
+            }
+
+            .conv-item {
+                min-width: 200px;
+                max-width: 200px;
+                padding: 10px 12px;
+            }
+
+            .conv-item-title {
+                font-size: 13px;
+            }
+
+            .conv-item-actions button {
+                font-size: 10px;
+                padding: 4px 6px;
+            }
+        }
+    </style>
+        <style>
+            body.dissertations-page,
+            body.dissertations-page * {
+                box-sizing: border-box;
+            }
+
+            body.dissertations-page {
+                background:
+                    radial-gradient(circle at 10% -10%, rgba(217, 119, 6, 0.07), transparent 42%),
+                    radial-gradient(circle at 95% 105%, rgba(120, 113, 108, 0.1), transparent 35%),
+                    #f6f3ee;
+                color: #1f2937;
+                overflow-x: hidden;
+                font-family: "Sohne", "Avenir Next", "Segoe UI", sans-serif;
+            }
+
+            body.dissertations-page .dissertations-container {
+                grid-template-columns: 300px minmax(0, 1fr);
+                height: calc(100vh - 68px);
+                overflow: hidden;
+                width: 100%;
+                min-width: 0;
+            }
+
+            body.dissertations-page .diss-sidebar {
+                background: #ece7df;
+                color: #44403c;
+                border-right: 1px solid #d6d0c6;
+                min-height: 0;
+            }
+
+            body.dissertations-page .diss-header {
+                background: rgba(236, 231, 223, 0.96);
+                border-bottom: 1px solid #d6d0c6;
+                backdrop-filter: blur(6px);
+                position: sticky;
+                top: 0;
+                z-index: 3;
+            }
+
+            body.dissertations-page .btn-new-conv {
+                border-radius: 12px;
+                font-weight: 700;
+                color: #f9fafb;
+                background: linear-gradient(140deg, #57534e, #292524);
+                box-shadow: 0 8px 20px rgba(41, 37, 36, 0.18);
+                transition: transform 0.2s ease, filter 0.2s ease;
+            }
+
+            body.dissertations-page .btn-new-conv:hover {
+                transform: translateY(-1px);
+                filter: brightness(1.05);
+            }
+
+            body.dissertations-page .diss-conversations {
+                padding: 10px;
+            }
+
+            body.dissertations-page .conv-item {
+                border-radius: 12px;
+                margin-bottom: 10px;
+                border: 1px solid #d6d0c6;
+                background: #f8f5f0;
+                transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+            }
+
+            body.dissertations-page .conv-item:hover {
+                transform: translateY(-1px);
+                background: #f2ece4;
+                border-color: #cfc7bb;
+            }
+
+            body.dissertations-page .conv-item.active {
+                background: #e7dfd2;
+                border-color: #b6ada0;
+            }
+
+            body.dissertations-page .conv-item-title {
+                color: #292524;
+                font-weight: 700;
+            }
+
+            body.dissertations-page .conv-item-date {
+                color: #78716c;
+            }
+
+            body.dissertations-page .btn-edit {
+                background: #d6d3d1;
+                color: #3f3f46;
+            }
+
+            body.dissertations-page .diss-content {
+                display: grid;
+                grid-template-rows: auto minmax(0, 1fr) auto;
+                background: transparent;
+                min-width: 0;
+                overflow-x: hidden;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            body.dissertations-page .diss-topbar {
+                border-bottom: 1px solid #e7e2d9;
+                padding: 14px 22px;
+                background: rgba(248, 245, 240, 0.92);
+                backdrop-filter: blur(12px);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px;
+                min-width: 0;
+            }
+
+            body.dissertations-page .diss-title {
+                font-size: 16px;
+                font-weight: 700;
+                color: #1c1917;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            body.dissertations-page .diss-subtitle {
+                font-size: 12px;
+                color: #78716c;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                min-width: 0;
+            }
+
+            body.dissertations-page .history-toggle {
+                display: none;
+                border: 1px solid #d6cfc3;
+                background: #f8f3eb;
+                color: #44403c;
+                border-radius: 999px;
+                padding: 7px 12px;
+                font-size: 12px;
+                font-weight: 600;
+                cursor: pointer;
+                white-space: nowrap;
+            }
+
+            body.dissertations-page .history-toggle::before {
+                content: "☰ ";
+                font-weight: 700;
+            }
+
+            body.dissertations-page .diss-chat {
+                padding: 24px 14px 30px;
+                gap: 14px;
+                min-width: 0;
+                overflow-x: hidden;
+            }
+
+            body.dissertations-page .message {
+                width: min(900px, 100%);
+                margin: 0 auto;
+            }
+
+            body.dissertations-page .message-content {
+                max-width: min(82%, 780px);
+                border-radius: 16px;
+                padding: 13px 16px;
+                line-height: 1.7;
+                font-size: 14px;
+                box-shadow: 0 2px 10px rgba(41, 37, 36, 0.08);
+                overflow-wrap: anywhere;
+            }
+
+            body.dissertations-page .user .message-content {
+                color: #1f2937;
+                background: #ebe6de;
+                border: 1px solid #d8d1c6;
+            }
+
+            body.dissertations-page .assistant .message-content {
+                color: #1f2937;
+                background: #fcfaf7;
+                border: 1px solid #e7e2d9;
+            }
+
+            body.dissertations-page .diss-input-area {
+                position: sticky;
+                bottom: 0;
+                z-index: 4;
+                border-top: 1px solid #e1dbd0;
+                background: rgba(246, 243, 238, 0.92);
+                backdrop-filter: blur(12px);
+                padding: 12px 14px 14px;
+                gap: 10px;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            body.dissertations-page .action-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 2px;
+            }
+
+            body.dissertations-page .action-btn {
+                white-space: nowrap;
+                padding: 8px 12px;
+                border: 1px solid #d8d1c6;
+                background: #f7f2ea;
+                color: #44403c;
+                border-radius: 999px;
+                font-weight: 600;
+            }
+
+            body.dissertations-page .action-btn:hover,
+            body.dissertations-page .action-btn.active {
+                background: #44403c;
+                color: white;
+                border-color: #44403c;
+            }
+
+            body.dissertations-page .input-group {
+                width: min(900px, 100%);
+                max-width: 100%;
+                margin: 0 auto;
+                gap: 10px;
+                background: #fdfbf8;
+                border: 1px solid #ddd6cc;
+                border-radius: 18px;
+                padding: 10px;
+                box-shadow: 0 6px 20px rgba(41, 37, 36, 0.07);
+                min-width: 0;
+                overflow: hidden;
+            }
+
+            body.dissertations-page .diss-textarea {
+                border: none;
+                outline: none;
+                resize: none;
+                width: 100%;
+                min-width: 0;
+                min-height: 42px;
+                max-height: 170px;
+                font-size: 15px;
+                line-height: 1.6;
+                background: transparent;
+                padding: 4px 2px;
+                overflow-wrap: anywhere;
+            }
+
+            body.dissertations-page .diss-textarea::placeholder {
+                color: #a8a29e;
+            }
+
+            body.dissertations-page .btn-send {
+                align-self: flex-end;
+                border-radius: 14px;
+                padding: 11px 14px;
+                font-weight: 700;
+                color: #fafaf9;
+                background: linear-gradient(145deg, #57534e, #3f3f46);
+                transition: transform 0.2s ease, filter 0.2s ease;
+            }
+
+            body.dissertations-page .btn-send:hover {
+                transform: translateY(-1px);
+                filter: brightness(1.04);
+            }
+
+            body.dissertations-page .btn-send:disabled {
+                background: #94a3b8;
+                transform: none;
+            }
+
+            .empty-state {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                color: #78716c;
+                padding: 30px;
+            }
+
+            body.dissertations-page .loading {
+                justify-content: flex-start;
+                color: #57534e;
+                background: #fcfaf7;
+                border: 1px solid #e7e2d9;
+                border-radius: 14px;
+                padding: 12px 14px;
+            }
+
+            body.dissertations-page .spinner {
+                border: 2px solid #d6d3d1;
+                border-top-color: #57534e;
+            }
+
+            @media (max-width: 980px) {
+                body.dissertations-page .dissertations-container {
+                    grid-template-columns: 1fr;
+                    grid-template-rows: auto minmax(0, 1fr);
+                    height: calc(100vh - 62px);
+                }
+
+                body.dissertations-page .diss-sidebar {
+                    border-right: none;
+                    border-bottom: 0;
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: max-height 0.28s ease, border-color 0.2s ease;
+                }
+
+                body.dissertations-page .dissertations-container.show-history .diss-sidebar {
+                    max-height: 188px;
+                    border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+                }
+
+                body.dissertations-page .diss-conversations {
+                    display: flex;
+                    gap: 10px;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                }
+
+                body.dissertations-page .history-toggle {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                body.dissertations-page .conv-item {
+                    min-width: 220px;
+                    margin-bottom: 0;
+                    flex-shrink: 0;
+                }
+            }
+
+            @media (max-width: 768px) {
+                body.dissertations-page .diss-topbar {
+                    padding: 10px 12px;
+                    flex-wrap: wrap;
+                }
+
+                body.dissertations-page .diss-title {
+                    font-size: 14px;
+                }
+
+                body.dissertations-page .diss-chat {
+                    padding: 12px 10px 20px;
+                    gap: 10px;
+                }
+
+                body.dissertations-page .message-content {
+                    max-width: 100%;
+                    font-size: 14px;
+                    border-radius: 14px;
+                }
+
+                body.dissertations-page .diss-input-area {
+                    padding: 10px;
+                }
+
+                body.dissertations-page .input-group {
+                    gap: 8px;
+                    border-radius: 14px;
+                    padding: 8px;
+                }
+
+                body.dissertations-page .diss-textarea {
+                    min-height: 38px;
+                    font-size: 16px;
+                }
+
+                body.dissertations-page .btn-send {
+                    padding: 11px 12px;
+                }
+
+                body.dissertations-page .history-toggle {
+                    width: 100%;
+                }
+            }
+
+            @media (max-width: 480px) {
+                body.dissertations-page .diss-sidebar {
+                    max-height: 170px;
+                }
+
+                body.dissertations-page .conv-item {
+                    min-width: 196px;
+                }
+
+                body.dissertations-page .action-btn {
+                    font-size: 11px;
+                    padding: 7px 10px;
+                }
+            }
+        </style>
+        <style>
+            /* Uniformiser la palette avec dashboard/question */
+            body.dissertations-page {
+                background: var(--gray-100);
+                color: var(--gray-800);
+                font-family: 'Segoe UI', Arial, sans-serif;
+            }
+
+            body.dissertations-page .diss-sidebar {
+                background: white;
+                border-right: 1px solid var(--gray-200);
+            }
+
+            body.dissertations-page .diss-header {
+                background: white;
+                border-bottom: 1px solid var(--gray-200);
+                backdrop-filter: none;
+            }
+
+            body.dissertations-page .btn-new-conv {
+                background: var(--blue);
+                box-shadow: none;
+            }
+
+            body.dissertations-page .btn-new-conv:hover {
+                background: var(--blue-dark);
+                transform: none;
+                filter: none;
+            }
+
+            body.dissertations-page .conv-item {
+                background: white;
+                border: 1px solid var(--gray-200);
+            }
+
+            body.dissertations-page .conv-item:hover {
+                background: var(--gray-50);
+                border-color: var(--gray-200);
+                transform: none;
+            }
+
+            body.dissertations-page .conv-item.active {
+                background: #eff6ff;
+                border-color: #bfdbfe;
+                border-left-color: var(--blue);
+            }
+
+            body.dissertations-page .conv-item-title,
+            body.dissertations-page .conv-item-date {
+                color: var(--gray-800);
+            }
+
+            body.dissertations-page .conv-item-title {
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            body.dissertations-page .conv-item-date {
+                font-size: 12px;
+            }
+
+            body.dissertations-page .btn-edit {
+                background: var(--gray-100);
+                color: var(--gray-800);
+            }
+
+            body.dissertations-page .diss-content {
+                background: var(--gray-50);
+            }
+
+            body.dissertations-page .diss-topbar {
+                background: white;
+                border-bottom: 1px solid var(--gray-200);
+                backdrop-filter: none;
+            }
+
+            body.dissertations-page .diss-title {
+                color: var(--gray-800);
+                font-size: 17px;
+                font-weight: 700;
+            }
+
+            body.dissertations-page .diss-subtitle {
+                color: var(--gray-600);
+                font-size: 13px;
+                font-weight: 500;
+            }
+
+            body.dissertations-page .history-toggle {
+                border: 1px solid var(--gray-200);
+                background: white;
+                color: var(--gray-600);
+            }
+
+            body.dissertations-page .history-toggle:hover {
+                background: var(--gray-50);
+            }
+
+            body.dissertations-page .user .message-content {
+                background: var(--blue);
+                color: white;
+                border: none;
+                font-size: 15px;
+                line-height: 1.6;
+            }
+
+            body.dissertations-page .assistant .message-content {
+                background: white;
+                color: var(--gray-800);
+                border: 1px solid var(--gray-200);
+                font-size: 15px;
+                line-height: 1.6;
+            }
+
+            body.dissertations-page .diss-input-area {
+                background: white;
+                border-top: 1px solid var(--gray-200);
+                backdrop-filter: none;
+            }
+
+            body.dissertations-page .action-btn {
+                border: 1px solid var(--gray-300);
+                background: white;
+                color: var(--gray-600);
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            body.dissertations-page .action-btn:hover,
+            body.dissertations-page .action-btn.active {
+                background: var(--blue);
+                color: white;
+                border-color: var(--blue);
+            }
+
+            body.dissertations-page .input-group {
+                background: white;
+                border: 1px solid var(--gray-200);
+                box-shadow: none;
+            }
+
+            body.dissertations-page .btn-send {
+                background: var(--green);
+            }
+
+            body.dissertations-page .btn-send:hover {
+                background: var(--green-dark);
+                transform: none;
+                filter: none;
+            }
+
+            body.dissertations-page .loading {
+                color: var(--gray-600);
+                background: white;
+                border: 1px solid var(--gray-200);
+            }
+
+            body.dissertations-page .spinner {
+                border: 2px solid var(--gray-300);
+                border-top-color: var(--blue);
+            }
+        </style>
+</head>
+    <body class="dissertations-page">
+
+<header class="header">
+    <div class="logo">KandidaX</div>
+    <div class="menu-toggle">☰</div>
+    <nav>
+        <a href="{% url 'accueil' %}">Accueil</a>
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'dissertations' %}" style="color: #22c55e; font-weight: 600;">Tuteur IA</a>
+        <a href="{% url 'accueil' %}#apropos">À propos</a>
+        <a href="{% url 'deconnexion' %}">Déconnexion</a>
+    </nav>
+</header>
+
+<div class="dissertations-container">
+    <!-- SIDEBAR -->
+    <div class="diss-sidebar">
+        <div class="diss-header">
+            <button class="btn-new-conv" onclick="nouvelleConversation()">
+                + Nouveau chat
+            </button>
+        </div>
+        <div class="diss-conversations" id="conversationsList">
+            {% for conv in conversations %}
+                <div class="conv-item {% if conv.id == conversation.id %}active{% endif %}" 
+                     onclick="chargerConversation({{ conv.id }})">
+                    <div class="conv-item-title">{{ conv.titre }}</div>
+                    <div class="conv-item-date">{{ conv.date_modification|date:"d/m H:i" }}</div>
+                    <div class="conv-item-actions">
+                        <button class="btn-edit" onclick="renommerConversation({{ conv.id }}); event.stopPropagation();">Renommer</button>
+                        <button class="btn-delete" onclick="supprimerConversation({{ conv.id }}); event.stopPropagation();">Supprimer</button>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state" style="display:block;">
+                    Aucune conversation.<br>
+                    <small>Créez une nouvelle pour commencer.</small>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="diss-content">
+        <div class="diss-topbar">
+            <div class="diss-title">
+                {% if conversation %}
+                    {{ conversation.titre }}
+                {% else %}
+                    Tuteur IA
+                {% endif %}
+            </div>
+            <div class="diss-subtitle">Pose tes questions, rédige et améliore tes textes</div>
+            <button class="history-toggle" type="button" title="Menu des conversations passees" onclick="toggleConversationHistory()">Conversations passees</button>
+        </div>
+
+        {% if conversation %}
+            <div class="diss-chat" id="chatMessages">
+                {% for message in conversation.messages.all %}
+                    <div class="message {{ message.role }}">
+                        <div class="message-content">
+                            {{ message.contenu|safe }}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty-state" style="padding: 40px;">
+                        <p>Aucun message. Commencez une conversation!</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="diss-input-area">
+                <div class="action-tabs">
+                    <button class="action-btn active" onclick="setAction('discuss', this)" data-action="discuss">
+                        💬 Discuter
+                    </button>
+                    <button class="action-btn" onclick="setAction('analyze', this)" data-action="analyze">
+                        📝 Analyser dissertation
+                    </button>
+                    <button class="action-btn" onclick="setAction('plan', this)" data-action="plan">
+                        📋 Générer un plan
+                    </button>
+                    <button class="action-btn" onclick="setAction('correct', this)" data-action="correct">
+                        ✏️ Corriger texte
+                    </button>
+                    <button class="action-btn" onclick="setAction('conseil', this)" data-action="conseil">
+                        💡 Conseil
+                    </button>
+                </div>
+
+                <div class="input-group">
+                    <textarea class="diss-textarea" id="messageInput" 
+                              placeholder="Écrivez votre dissertation, posez une question ou collez un texte..." 
+                              onkeydown="if(event.key=='Enter' && event.ctrlKey) envoyerMessage();"></textarea>
+                    <button class="btn-send" id="sendBtn" onclick="envoyerMessage()">Envoyer</button>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state" style="flex: 1;">
+                <p>Sélectionnez ou créez une conversation pour commencer</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+const CONVERSATION_ID = {{ conversation.id|default:"null" }};
+let currentAction = 'discuss';
+
+function setAction(action, btn) {
+    currentAction = action;
+    document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function toggleConversationHistory() {
+    const container = document.querySelector('.dissertations-container');
+    const btn = document.querySelector('.history-toggle');
+    if (!container || !btn) return;
+
+    const isOpen = container.classList.toggle('show-history');
+    btn.textContent = isOpen ? 'Masquer conversations' : 'Conversations passees';
+}
+
+async function envoyerMessage() {
+    const textarea = document.getElementById('messageInput');
+    const message = textarea.value.trim();
+    
+    if (!message || !CONVERSATION_ID) return;
+    
+    // Afficher le message de l'utilisateur
+    const chatDiv = document.getElementById('chatMessages');
+    const userMsgDiv = document.createElement('div');
+    userMsgDiv.className = 'message user';
+    userMsgDiv.innerHTML = `<div class="message-content">${escapeHtml(message)}</div>`;
+    chatDiv.appendChild(userMsgDiv);
+    
+    // Désactiver l'input
+    textarea.value = '';
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn.disabled = true;
+    
+    // Afficher le loader
+    const loaderDiv = document.createElement('div');
+    loaderDiv.className = 'message assistant';
+    loaderDiv.innerHTML = '<div class="loading"><div class="spinner"></div> Réponse en cours...</div>';
+    chatDiv.appendChild(loaderDiv);
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+    
+    try {
+        const response = await fetch('{% url "message_chatbot" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                conversation_id: CONVERSATION_ID,
+                message: message,
+                action: currentAction
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            loaderDiv.innerHTML = `<div class="message-content" style="background: #fee2e2; color: #991b1b; border-color: #fecaca;">⚠️ Erreur: ${escapeHtml(data.error)}</div>`;
+        } else {
+            loaderDiv.innerHTML = `<div class="message-content">${markdownToHtml(data.response)}</div>`;
+        }
+    } catch (e) {
+        loaderDiv.innerHTML = `<div class="message-content" style="background: #fee2e2; color: #991b1b; border-color: #fecaca;">⚠️ Erreur de connexion: ${escapeHtml(e.message)}</div>`;
+    }
+    
+    sendBtn.disabled = false;
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+}
+
+async function nouvelleConversation() {
+    window.location.href = '{% url "nouvelle_conversation" %}';
+}
+
+async function chargerConversation(convId) {
+    window.location.href = `{% url "dissertations" %}?conv_id=${convId}`;
+}
+
+async function renommerConversation(convId) {
+    const newTitle = prompt('Nouveau titre pour cette conversation:');
+    if (!newTitle) return;
+    
+    try {
+        const response = await fetch('{% url "renommer_conversation" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                conversation_id: convId,
+                titre: newTitle
+            })
+        });
+        
+        if (response.ok) {
+            location.reload();
+        }
+    } catch (e) {
+        alert('Erreur: ' + e.message);
+    }
+}
+
+async function supprimerConversation(convId) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette conversation?')) return;
+    
+    try {
+        const response = await fetch('{% url "supprimer_conversation" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                conversation_id: convId
+            })
+        });
+        
+        if (response.ok) {
+            location.reload();
+        }
+    } catch (e) {
+        alert('Erreur: ' + e.message);
+    }
+}
+
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+function markdownToHtml(text) {
+    // Convertir le markdown simple en HTML
+    let html = escapeHtml(text);
+    
+    // Titres
+    html = html.replace(/^### (.*?)$/gm, '<strong>$1</strong>');
+    html = html.replace(/^## (.*?)$/gm, '<strong style="font-size: 16px;">$1</strong>');
+    html = html.replace(/^# (.*?)$/gm, '<strong style="font-size: 18px;">$1</strong>');
+    
+    // Gras
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
+    
+    // Italique
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    html = html.replace(/_(.*?)_/g, '<em>$1</em>');
+    
+    // Listes
+    html = html.replace(/^\- (.*?)$/gm, '• $1');
+    html = html.replace(/^\* (.*?)$/gm, '• $1');
+    html = html.replace(/^\d+\. (.*?)$/gm, (match, content, offset, string) => {
+        const lineNum = string.substring(0, offset).split('\n').length;
+        return (lineNum % 5) + 1 + '. ' + content;
+    });
+    
+    // Sauts de ligne
+    html = html.replace(/\n/g, '<br>');
+    
+    return html;
+}
+
+// Scroll au bas au chargement
+document.addEventListener('DOMContentLoaded', () => {
+    const chatDiv = document.getElementById('chatMessages');
+    if (chatDiv) chatDiv.scrollTop = chatDiv.scrollHeight;
+
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('.header nav');
+    if (menuToggle && nav) {
+        menuToggle.addEventListener('click', function () {
+            nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+        });
+    }
+});
+</script>
+
+</body>
+</html>

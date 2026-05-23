@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Politique de Confidentialité - KandidaX</title>
+    <link rel="icon" type="image/png" href="{% static 'quiz_app/logo-kandidax.png' %}">
+    <link rel="stylesheet" href="{% static 'quiz_app/plateforme.css' %}">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">KandidaX</div>
+    <div class="menu-toggle">☰</div>
+    <nav>
+        <a href="{% url 'accueil' %}">Accueil</a>
+        <a href="{% url 'accueil' %}#apropos">À propos</a>
+        <a href="{% url 'connexion' %}">Connexion</a>
+        <a href="{% url 'inscription' %}" class="btn-primary">S'inscrire</a>
+    </nav>
+</header>
+
+<div id="backdrop" class="backdrop"></div>
+
+<main class="info-page">
+    <div class="info-container">
+        <h1>Politique de Confidentialité</h1>
+        <p class="last-updated">Dernière mise à jour : Avril 2026</p>
+        
+        <section class="info-section">
+            <h2>1. Engagement envers la Confidentialité</h2>
+            <p>
+                KandidaX est profondément engagée à protéger votre vie privée. Cette politique 
+                explains comment nous collectons, utilisons, divulguons et sauvegardons vos informations personnelles. 
+                En utilisant notre plateforme, vous consentez à la collecte et à l'utilisation de vos informations 
+                conformément à cette politique.
+            </p>
+        </section>
+
+        <section class="info-section">
+            <h2>2. Informations que Nous Collectons</h2>
+            <h3>2.1 Informations que Vous Fournirez Directement</h3>
+            <ul>
+                <li><strong>Informations de Compte :</strong> Nom, prénom, adresse e-mail, mot de passe, numéro de téléphone</li>
+                <li><strong>Informations de Profil :</strong> Photo de profil, établissement scolaire, année d'examen</li>
+                <li><strong>Informations Académiques :</strong> Scores, réponses aux questions, matières d'intérêt</li>
+                <li><strong>Informations de Communication :</strong> Messages de contact, feedback, suggestions</li>
+            </ul>
+
+        </section>
+
+        <section class="info-section">
+            <h2>3. Utilisation de Vos Informations</h2>
+            <p>Nous utilisons vos informations pour :</p>
+            <ul>
+                <li>Créer, maintenir et sécuriser votre compte utilisateur</li>
+                <li>Fournir les services et le contenu de la plateforme</li>
+                <li>Personnaliser votre expérience d'apprentissage</li>
+                <li>Adapter le contenu selon votre niveau et votre progression</li>
+                <li>Communiquer avec vous concernant les mises à jour, les nouvelles fonctionnalités</li>
+                <li>Vous envoyer des newsletters (avec possibilité de vous désabonner)</li>
+                <li>Améliorer la qualité et la performance de la plateforme</li>
+                <li>Analyse statitique et recherche pour optimiser les services</li>
+                <li>Prévention de fraude et sécurité de la plateforme</li>
+                <li>Conformité avec la loi et réglementations applicables</li>
+                <li>Supporter les utilisateurs et résoudre les problèmes techniques</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2>4. Partage de Vos Informations</h2>
+            <h3>4.1 Nous ne vendons jamais vos données</h3>
+
+            <h3>4.2 Protection des Données</h3>
+            <ul>
+                <li>Les données ne sont partagées que ce qui est nécessaire</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2>5. Cookies et Technologie de Suivi</h2>
+            <ul>
+                <li>Nous utilisons des cookies pour améliorer votre expérience</li>
+                <li>Les cookies nous permettent de se souvenir de vos préférences</li>
+                <li>Vous pouvez désactiver les cookies dans les paramètres de votre navigateur</li>
+                <li>Nous utilisons aussi des pixels de suivi pour l'analyse d'utilisation</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2>6. Sécurité de Vos Données</h2>
+            <h3>6.1 Mesures de Sécurité</h3>
+            <ul>
+                <li>Nous utilisons le chiffrement SSL/TLS pour toutes les données transmises</li>
+                <li>Les mots de passe sont chiffrés et ne sont jamais stockés en clair</li>
+                <li>Nous utilisons des firewalls et systèmes de detection d'intrusion</li>
+                <li>Les données sensibles sont stockées sur des serveurs sécurisés</li>
+
+            </ul>
+
+            <h3>6.2 Limitation de la Responsabilité</h3>
+            <ul>
+                <li>Malgré nos efforts, aucune transmission Internet n'est 100% sécurisée</li>
+                <li>Vous utilisez la plateforme à vos risques et périls</li>
+                <li>En cas de violation de données, nous notifierons les utilisateurs affectés</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2>7. Durée de Conservation des Données</h2>
+            <ul>
+                <li>Nous conservons vos informations tant que votre compte est actif</li>
+                <li>Après suppression du compte, les données non-sensibles peuvent être conservées pour archivage</li>
+                <li>Les données sensibles (mots de passe) sont supprimées immédiatement</li>
+                <li>Les données d'analyse anonyme peuvent être conservées indéfiniment</li>
+                <li>Vous pouvez demander la suppression de vos données à tout moment</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2>8. Vos Droits et Contrôles</h2>
+            <h3>8.1 Droit d'Accès</h3>
+            <ul>
+                <li>Vous pouvez accéder à toutes vos informations personnelles dans votre profil</li>
+            </ul>
+
+            <h3>8.2 Droit de Modification</h3>
+            <ul>
+                <li>Vous pouvez corriger ou mettre à jour vos informations à tout moment</li>
+            </ul>
+
+            <h3>8.3 Droit de Suppression</h3>
+            <ul>
+                <li>Vous pouvez demander la suppression de votre compte et de vos données</li>
+                <li>Attention: Cette action est généralement irréversible</li>
+            </ul>
+
+            <h3>8.4 Droit de Non-Démarchage</h3>
+            <ul>
+                <li>Vous pouvez vous désabonner de nos emails marketing à tout moment</li>
+                <li>Un lien "Se désabonner" est présent dans chaque email</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2>9. Conformité avec les Lois</h2>
+            <ul>
+                <li>Nous nous efforçons de respecter les régulations haïtiennes en matière de données</li>
+                <li>Nous respectons les normes internationales de protection de données</li>
+                <li>Notre plateforme est conforme à la RGPD si vous accédez depuis l'UE</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2>10. Modification de Cette Politique</h2>
+            <ul>
+                <li>Nous pouvons modifier cette politique à tout moment</li>
+                <li>Les modifications seront notifiées par email ou sur la plateforme</li>
+                <li>Votre utilisation continue vaut acceptation des nouveaux termes</li>
+                <li>Consultez régulièrement cette page pour les dernières mises à jour</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2>11. Questions et Contact</h2>
+            <p>Pour toute question concernant cette politique de confidentialité :</p>
+            <ul>
+                <li>📧 Email : kandidax0@gmail.com</li>
+                <li>📞 Téléphone : 509 47023167</li>
+                <li>📮 Adresse : Limonade, Haïti</li>
+            </ul>
+            <p>
+                Nous répondrons à toutes les demandes dans un délai de 30 jours.
+            </p>
+        </section>
+
+        <div class="acceptance-section">
+            <p>
+                En acceptant cette politique lors de votre inscription, vous acceptez que nous 
+                traitions vos données conformément à ces dispositions.
+            </p>
+        </div>
+    </div>
+</main>
+
+        <footer class="footer">  
+            <h2>Contactez-nous</h2>
+            <p>Des questions ? Contactez nous.</p>
+            <p>Email : kandidax0@gmail.com</p>
+            <p>Telephone : 509 47023167</p>   
+            <a href="{% url 'conditions_generales' %}" class="btn"> Conditions générales </a>
+            <a href="{% url 'confidentialite' %}" class="btn">Politique de confidentialité</a>
+            <div>
+                <p>© 2026 — KandidaX</p>
+            </div>
+        </footer>
+
+<script src="{% static 'quiz_app/plateforme.js' %}"></script>
+<script>
+const menuToggle = document.querySelector(".menu-toggle");
+const nav = document.querySelector(".header nav");
+
+menuToggle.addEventListener("click", function(){
+    if(nav.style.display === "flex"){
+        nav.style.display = "none";
+    } else {
+        nav.style.display = "flex";
+    }
+});
+</script>
+
+</body>
+</html>

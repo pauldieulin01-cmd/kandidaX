@@ -1,0 +1,212 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - KandidaX</title>
+    <link rel="icon" type="image/png" href="{% static 'quiz_app/logo-kandidax.png' %}">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'quiz_app/plateforme.css' %}?v=20260501-1">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+
+    <a href="{% url 'accueil' %}" class="logo" aria-label="KandidaX - retour a l'accueil">
+        <img src="{% static 'quiz_app/logo-kandidax.png' %}" alt="Logo KandidaX">
+    </a>
+
+    <div class="menu-toggle">☰</div>
+
+    <nav>
+        <a href="{% url 'accueil' %}">Accueil</a>
+         <a href="{% url 'accueil' %}#apropos">À propos</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'dissertations' %}" style="color: #22c55e; font-weight: 600;">🤖 Tuteur IA</a>
+        {% endif %}
+        <a href="{% url 'connexion' %}">Connexion</a>
+        <a href="{% url 'inscription' %}" class="btn-primary">S'inscrire</a>
+    </nav>
+
+</header>
+
+
+<!-- ================= SECTION INSCRIPTION ================= -->
+<section class="signup">
+
+    <form method="POST" action="{% url 'inscription' %}" class="signup-form">
+        <h2>Créer un compte</h2>
+        <p class="login-link">Inscrivez-vous et commencez votre préparation dès aujourd'hui 👇</p>
+        
+        {% csrf_token %}
+
+        <!-- Afficher les messages d'erreur globaux -->
+        {% if form.non_field_errors %}
+            <div class="error-messages" style="margin-bottom: 16px;">
+                {% for error in form.non_field_errors %}
+                    <p style="color: #dc2626; font-size: 14px; background: #fee2e2; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid #dc2626;">
+                        ⚠️ {{ error }}
+                    </p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Username -->
+        <p>
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {% if form.username.errors %}
+                <ul class="error-list">
+                    {% for error in form.username.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </p>
+
+        <!-- Email -->
+        <p>
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            {% if form.email.errors %}
+                <ul class="error-list">
+                    {% for error in form.email.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </p>
+
+        <!-- Nom complet -->
+        <p>
+            {{ form.nom_complet.label_tag }}
+            {{ form.nom_complet }}
+            {% if form.nom_complet.errors %}
+                <ul class="error-list">
+                    {% for error in form.nom_complet.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </p>
+
+        <!-- Niveau -->
+        <p>
+            {{ form.niveau.label_tag }}
+            {{ form.niveau }}
+            {% if form.niveau.errors %}
+                <ul class="error-list">
+                    {% for error in form.niveau.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </p>
+
+        <!-- Option -->
+        <p>
+            {{ form.option.label_tag }}
+            {{ form.option }}
+            {% if form.option.errors %}
+                <ul class="error-list">
+                    {% for error in form.option.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </p>
+
+        <!-- Entité -->
+        <p>
+            {{ form.entite.label_tag }}
+            {{ form.entite }}
+            {% if form.entite.errors %}
+                <ul class="error-list">
+                    {% for error in form.entite.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </p>
+
+        <!-- Password 1 -->
+        <p>
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <ul class="error-list">
+                    {% for error in form.password1.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% if form.password1.help_text %}
+                <small style="color: var(--gray-400); font-size: 12px; display: block; margin-top: 6px;">
+                    {{ form.password1.help_text|safe }}
+                </small>
+            {% endif %}
+        </p>
+
+        <!-- Password 2 -->
+        <p>
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <ul class="error-list">
+                    {% for error in form.password2.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </p>
+
+        <button type="submit" class="btn-primary">
+            S'inscrire
+        </button>
+
+        <p class="login-link" style="margin-bottom: 0;">
+            Vous avez déjà un compte ?
+            <a href="{% url 'connexion' %}">Se connecter</a>
+        </p>
+
+    </form>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+
+    <a href="{% url 'conditions_generales' %}" class="btn">Conditions générales</a>
+    <a href="{% url 'confidentialite' %}" class="btn">Politique de confidentialité</a>
+
+    <div>
+        <p>© 2026 — KandidaX. Tous droits réservés</p>
+    </div>
+
+</footer>
+
+
+<!-- ================= MENU RESPONSIVE JS ================= -->
+<script>
+const menuToggle = document.querySelector(".menu-toggle");
+const nav = document.querySelector(".header nav");
+
+menuToggle.addEventListener("click", function () {
+    if (nav.style.display === "flex") {
+        nav.style.display = "none";
+    } else {
+        nav.style.display = "flex";
+    }
+});
+</script>
+
+<!-- JS STATIC -->
+<script src="{% static 'quiz_app/plateforme.js' %}"></script>
+
+</body>
+</html>

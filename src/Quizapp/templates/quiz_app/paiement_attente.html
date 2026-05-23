@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paiement déclaré — KandidaX</title>
+<link rel="icon" type="image/png" href="{% static 'quiz_app/logo-kandidax.png' %}">
+<link rel="stylesheet" href="{% static 'quiz_app/plateforme.css' %}?v=2">
+<style>
+body{background:#f1f5f9;min-height:100vh;display:flex;flex-direction:column;
+  font-family:'Segoe UI',sans-serif;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;
+  background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.topbar .logo{font-size:18px;font-weight:800;color:#2563eb;}
+.topbar nav a{color:#64748b;margin-left:18px;font-size:14px;text-decoration:none;}
+
+.wrap{max-width:480px;margin:48px auto;padding:0 16px;flex:1;}
+.card{background:#fff;border-radius:18px;padding:36px 28px;box-shadow:0 4px 24px rgba(0,0,0,.08);}
+
+.icon-ok{width:64px;height:64px;border-radius:50%;background:#dcfce7;
+  display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px;}
+
+h1{text-align:center;font-size:22px;font-weight:800;color:#1e293b;margin-bottom:6px;}
+.subtitle{text-align:center;font-size:14px;color:#64748b;margin-bottom:24px;}
+
+.ref-box{background:#fef9c3;border:2px solid #fbbf24;border-radius:12px;
+  padding:14px 18px;text-align:center;margin-bottom:22px;}
+.ref-lbl{font-size:11px;color:#92400e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.ref-code{font-size:20px;font-weight:900;color:#b45309;font-family:monospace;letter-spacing:2px;}
+
+.info-box{background:#f0f9ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;
+  padding:14px 18px;margin-bottom:20px;}
+.info-row{display:flex;justify-content:space-between;padding:7px 0;
+  font-size:14px;border-bottom:1px solid #bfdbfe;}
+.info-row:last-child{border-bottom:none;}
+.info-row .lbl{color:#1e40af;font-weight:500;}
+.info-row .val{font-weight:700;color:#0c4a6e;}
+
+.btn-wa{display:block;width:100%;padding:15px;background:#22c55e;color:#fff;
+  border:none;border-radius:12px;font-size:16px;font-weight:800;
+  text-align:center;text-decoration:none;transition:all .2s;margin-bottom:10px;}
+.btn-wa:hover{background:#16a34a;transform:translateY(-2px);}
+.btn-back{display:block;width:100%;padding:13px;background:#e2e8f0;color:#475569;
+  border:none;border-radius:12px;font-size:15px;font-weight:600;
+  text-align:center;text-decoration:none;transition:background .2s;}
+.btn-back:hover{background:#cbd5e1;}
+
+.tip{background:#ecfdf5;border-left:4px solid #22c55e;border-radius:0 10px 10px 0;
+  padding:12px 16px;font-size:13px;color:#065f46;margin-top:20px;}
+
+footer{text-align:center;padding:16px;font-size:13px;color:#94a3b8;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">🎓 KandidaX</div>
+  <nav><a href="{% url 'dashboard' %}">← Dashboard</a></nav>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div class="icon-ok">✓</div>
+    <h1>Paiement déclaré !</h1>
+    <p class="subtitle">Envoyez la confirmation sur WhatsApp pour validation</p>
+
+    <div class="ref-box">
+      <div class="ref-lbl">Votre référence</div>
+      <div class="ref-code">{{ payment.reference }}</div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-row">
+        <span class="lbl">Niveau</span>
+        <span class="val">{{ level }} — {{ level_nom }}</span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">Montant</span>
+        <span class="val">{{ prix }}G</span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">Numéro MonCash</span>
+        <span class="val">{{ admin_moncash }}</span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">Statut</span>
+        <span class="val" style="color:#f59e0b;">⏳ En attente de validation</span>
+      </div>
+    </div>
+
+    <a href="{{ whatsapp_url }}" target="_blank" rel="noopener" class="btn-wa">
+      📲 Ouvrir WhatsApp et envoyer
+    </a>
+    <a href="{% url 'dashboard' %}" class="btn-back">Retour au tableau de bord</a>
+
+    <div class="tip">
+      💡 Une fois votre message envoyé, l'admin validera votre accès et vous pourrez continuer les quiz.
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 KandidaX</footer>
+</body>
+</html>

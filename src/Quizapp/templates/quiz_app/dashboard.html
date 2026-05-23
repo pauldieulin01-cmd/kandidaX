@@ -1,0 +1,297 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — KandidaX</title>
+<link rel="icon" type="image/png" href="{% static 'quiz_app/logo-kandidax.png' %}">
+<link rel="stylesheet" href="{% static 'quiz_app/plateforme.css' %}?v=2">
+<style>
+:root{--accent:#2563eb;--green:#22c55e;--gold:#f59e0b;--bg:#f1f5f9;}
+body{background:var(--bg);min-height:100vh;display:flex;flex-direction:column;}
+
+/* ── HEADER ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;
+  background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.08);position:sticky;top:0;z-index:50;}
+.topbar .logo{display:inline-flex;align-items:center;flex-shrink:0;}
+.topbar .logo img{display:block;height:46px;width:auto;}
+.topbar nav a{margin-left:20px;font-size:14px;font-weight:500;color:#64748b;transition:color .2s;}
+.topbar nav a:hover{color:var(--accent);}
+.topbar nav a.active{color:var(--accent);}
+.menu-toggle{display:none;font-size:24px;cursor:pointer;color:#64748b;}
+
+/* ── LAYOUT ── */
+.page{max-width:1100px;margin:32px auto;padding:0 20px;display:grid;
+  grid-template-columns:290px 1fr;gap:24px;flex:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{display:flex;flex-direction:column;gap:16px;width:100%;min-width:0;}
+.main{min-width:0;}
+.card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 3px rgba(0,0,0,.06);width:100%;max-width:100%;}
+
+.profile-pic{width:80px;height:80px;border-radius:50%;object-fit:cover;
+  border:3px solid var(--green);display:block;margin:0 auto 12px;}
+.profile-name{text-align:center;font-size:18px;font-weight:700;color:#1e293b;margin-bottom:4px;}
+.profile-sub{text-align:center;font-size:13px;color:#94a3b8;}
+
+.level-badge{display:flex;align-items:center;justify-content:center;gap:8px;
+  background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;
+  padding:10px 16px;border-radius:10px;font-weight:700;font-size:15px;margin:12px 0;}
+
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:8px;}
+.stat{text-align:center;background:#f8fafc;border-radius:10px;padding:10px 6px;}
+.stat-val{font-size:22px;font-weight:800;color:var(--accent);}
+.stat-lbl{font-size:11px;color:#94a3b8;margin-top:2px;}
+
+/* progression bar */
+.prog-wrap{margin-top:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:13px;color:#64748b;margin-bottom:6px;}
+.prog-bar{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#7c3aed);
+  transition:width 1s ease;}
+
+/* ── MAIN ── */
+.main{display:flex;flex-direction:column;gap:20px;}
+
+.section-title{font-size:17px;font-weight:700;color:#1e293b;margin-bottom:14px;}
+
+/* matieres */
+.matieres-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.matiere-btn{display:flex;align-items:center;gap:10px;padding:13px 16px;
+  background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;
+  font-size:14px;font-weight:600;color:var(--accent);cursor:pointer;
+  text-decoration:none;transition:all .2s;}
+.matiere-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);
+  transform:translateY(-2px);}
+.btn-random{display:block;width:100%;margin-top:14px;padding:13px;
+  background:var(--green);color:#fff;border:none;border-radius:10px;
+  font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;
+  text-decoration:none;}
+.btn-random:hover{background:#16a34a;transform:translateY(-2px);}
+
+/* niveaux */
+.levels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.level-card{border-radius:12px;padding:16px;border:2px solid #e2e8f0;
+  background:#f8fafc;position:relative;transition:all .25s;}
+.level-card.actuel{border-color:var(--accent);background:#eff6ff;}
+.level-card.debloque{border-color:var(--green);background:#f0fdf4;}
+.level-card.verrouille{opacity:.7;}
+.lc-num{font-size:26px;font-weight:900;color:#cbd5e1;margin-bottom:4px;}
+.level-card.actuel .lc-num{color:var(--accent);}
+.level-card.debloque .lc-num{color:var(--green);}
+.lc-nom{font-size:13px;font-weight:700;color:#1e293b;margin-bottom:4px;}
+.lc-seuil{font-size:11px;color:#94a3b8;}
+.lc-badge{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;}
+.lc-badge.actuel{background:var(--accent);color:#fff;}
+.lc-badge.debloque{background:var(--green);color:#fff;}
+.lc-badge.verrouille{background:#e2e8f0;color:#64748b;}
+.lc-badge.payant{background:var(--gold);color:#fff;}
+.lc-pay-btn{display:block;margin-top:8px;padding:6px 10px;background:var(--gold);
+  color:#fff;border-radius:8px;font-size:12px;font-weight:700;text-align:center;text-decoration:none;}
+
+/* motivation */
+.motivation{background:linear-gradient(135deg,#fef9c3,#fef08a);border:1px solid #fde047;
+  border-radius:12px;padding:16px;font-size:14px;color:#78350f;text-align:center;line-height:1.6;}
+
+/* ── FOOTER ── */
+footer{background:#1e293b;color:#94a3b8;text-align:center;padding:16px 20px;font-size:13px;margin-top:auto;}
+footer a{color:#94a3b8;margin:0 8px;}footer a:hover{color:#fff;}
+
+@media(max-width:900px){
+  .page{grid-template-columns:1fr;}
+  .levels-grid{grid-template-columns:repeat(2,1fr);}
+  .menu-toggle{display:block;}
+  .topbar nav{display:none;position:absolute;top:60px;left:0;right:0;
+    flex-direction:column;background:#fff;padding:10px 20px;box-shadow:0 4px 12px rgba(0,0,0,.1);}
+  .topbar nav.open{display:flex;}
+  .topbar nav a{margin:6px 0;font-size:15px;}
+}
+@media(max-width:600px){
+  .topbar .logo img{height:38px;}
+  .levels-grid{grid-template-columns:1fr 1fr;}
+  .stat-row{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="{% url 'accueil' %}" class="logo" aria-label="KandidaX - retour a l'accueil">
+    <img src="{% static 'quiz_app/logo-kandidax.png' %}" alt="Logo KandidaX">
+  </a>
+  <div class="menu-toggle" onclick="this.nextElementSibling.classList.toggle('open')">☰</div>
+  <nav>
+    <a href="{% url 'accueil' %}">Accueil</a>
+    <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
+    <a href="{% url 'dissertations' %}">Tuteur IA</a>
+    <a href="{% url 'deconnexion' %}">Déconnexion</a>
+  </nav>
+</header>
+
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="card">
+      {% if etudiant.photo %}
+        <img class="profile-pic" src="{{ etudiant.photo.url }}" alt="Photo">
+      {% else %}
+        <img class="profile-pic"
+          src="https://ui-avatars.com/api/?name={{ etudiant.nom_complet|urlencode }}&background=2563eb&color=fff&size=120"
+          alt="Avatar">
+      {% endif %}
+      <div class="profile-name">{{ etudiant.nom_complet }}</div>
+      <div class="profile-sub">{{ etudiant.user.email }}</div>
+
+      <div class="level-badge">
+        ⭐ Niveau {{ level_info.numero }} — {{ level_info.nom }}
+      </div>
+
+      <div class="stat-row">
+        <div class="stat">
+          <div class="stat-val">{{ etudiant.score_total }}</div>
+          <div class="stat-lbl">Points</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">#{{ classement }}</div>
+          <div class="stat-lbl">Rang</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">{{ total }}</div>
+          <div class="stat-lbl">Étudiants</div>
+        </div>
+      </div>
+
+      {% if points_to_next > 0 %}
+      <div class="prog-wrap">
+        <div class="prog-label">
+          <span>Prochain niveau</span>
+          <span>{{ points_to_next }} pts restants</span>
+        </div>
+        <div class="prog-bar">
+          <div class="prog-fill" id="prog" style="width:0%"></div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="motivation">
+      💪 <em>Continuez à répondre — chaque bonne réponse vaut <strong>2 points</strong>!</em>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- MATIÈRES -->
+    <div class="card">
+      <div class="section-title">Choisir une matière</div>
+      <div class="matieres-grid">
+        {% for m in matieres %}
+        <a href="{% url 'page_question' %}?matiere={{ m.nom|urlencode }}" class="matiere-btn">
+          📖 {{ m.nom }}
+        </a>
+        {% empty %}
+        <p style="color:#94a3b8;">Aucune matière disponible.</p>
+        {% endfor %}
+      </div>
+      <a href="{% url 'page_question' %}" class="btn-random">🎲 Quiz aléatoire (toutes matières)</a>
+    </div>
+
+    <!-- NIVEAUX -->
+    <div class="card">
+      <div class="section-title">🎯 Votre progression par niveaux</div>
+      <div class="levels-grid">
+        {% for lvl in niveaux_info %}
+        <div class="level-card {{ lvl.statut }}">
+          <div class="lc-num">{{ lvl.numero }}</div>
+          <div class="lc-nom">{{ lvl.nom }}</div>
+          <div class="lc-seuil">≥ {{ lvl.seuil }} pts{% if lvl.statut == 'actuel' and lvl.prix %} · {{ lvl.prix }}G{% endif %}</div>
+
+          {% if lvl.statut == 'actuel' %}
+            <span class="lc-badge actuel">▶ Actuel</span>
+          {% elif lvl.statut == 'debloque' %}
+            <span class="lc-badge debloque">✓ Débloqué</span>
+          {% else %}
+            <span class="lc-badge verrouille">🔒 Verrouillé</span>
+          {% endif %}
+
+          {% if lvl.statut == 'actuel' and lvl.prix and not lvl.payant_ok %}
+            {% if lvl.can_request_access %}
+              <span class="lc-badge payant">💳 {{ lvl.prix }}G</span>
+              <a href="{% url 'paiement_niveau' lvl.numero %}" class="lc-pay-btn">Demander l'accès</a>
+            {% else %}
+              <span class="lc-badge verrouille">Seuil non atteint</span>
+            {% endif %}
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </main>
+</div>
+
+        <footer class="footer">  
+            <h2>Contactez-nous</h2>
+            <p>Des questions ? Contactez nous.</p>
+            <p>Email : kandidax0@gmail.com</p>
+          <p>Telephone : 509 47023167</p>   
+            <a href="{% url 'conditions_generales' %}" class="btn"> Conditions générales </a>
+            <a href="{% url 'confidentialite' %}" class="btn">Politique de confidentialité</a>
+            <div>
+                <p>© 2026 — KandidaX. Tous droits réservés</p>
+            </div>
+        </footer>
+
+<script>
+// Calculer le pourcentage de progression pour la barre
+const total = {{ etudiant.score_total }};
+const nxt   = {{ points_to_next }};
+{% if level_info.numero < 9 %}
+const seuil_cur = {{ level_info.numero|add:"-1" }};
+{% endif %}
+// simple: points accumulés depuis le seuil actuel / points nécessaires
+const bar = document.getElementById('prog');
+if (bar && nxt > 0) {
+  const cur_seuil = total - ({{ etudiant.score_total }} - ({{ etudiant.score_total }} % 10));
+  const pct = Math.min(100, Math.round(total / (total + nxt) * 100));
+  setTimeout(() => bar.style.width = pct + '%', 300);
+}
+</script>
+
+<!-- Bouton flottant Tuteur IA -->
+<a href="{% url 'dissertations' %}" class="fab-tutor" title="Tuteur IA">
+  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+  <span>Tuteur IA</span>
+</a>
+<style>
+.fab-tutor {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #fff;
+  text-decoration: none;
+  padding: 14px 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 20px rgba(37,99,235,.45);
+  font-weight: 700;
+  font-size: 15px;
+  z-index: 1000;
+  transition: transform .2s, box-shadow .2s;
+}
+.fab-tutor:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(37,99,235,.55);
+  color: #fff;
+}
+</style>
+</body>
+</html>

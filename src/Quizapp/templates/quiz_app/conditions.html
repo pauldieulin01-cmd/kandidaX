@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conditions Générales - KandidaX</title>
+    <link rel="icon" type="image/png" href="{% static 'quiz_app/logo-kandidax.png' %}">
+    <link rel="stylesheet" href="{% static 'quiz_app/plateforme.css' %}">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">KandidaX</div>
+    <div class="menu-toggle">☰</div>
+    <nav>
+        <a href="{% url 'accueil' %}">Accueil</a>
+        <a href="{% url 'accueil' %}#apropos">À propos</a>    
+        {% if user.is_authenticated %}
+        <a href="{% url 'dissertations' %}" style="color: #22c55e; font-weight: 600;">Tuteur IA</a>
+        {% endif %}
+        <a href="{% url 'connexion' %}">Connexion</a>
+        <a href="{% url 'inscription' %}" class="btn-primary">S'inscrire</a>
+    </nav>
+</header>
+
+<div id="backdrop" class="backdrop"></div>
+
+<main class="info-page">
+    <div class="info-container">
+        <h1>Conditions Générales d'Utilisation</h1>
+        <p class="last-updated">Dernière mise à jour : Avril 2026</p>
+        
+        <section class="info-section">
+            <h2> Introduction</h2>
+            <p>
+                Bienvenue sur KandidaX. Ces conditions générales régissent votre utilisation de la plateforme, 
+                y compris le site web et les services associés (collectivement, les "Services"). En accédant à la plateforme ou en 
+                utilisant nos services, vous acceptez d'être lié par ces conditions. Si vous n'acceptez pas ces termes, veuillez 
+                ne pas utiliser la plateforme.
+            </p>
+        </section>
+        <section class="info-section">
+            <h2>Interruption de Service</h2>
+            <ul>
+                <li>Nous nous réservons le droit de suspendre ou de terminer votre accès à tout moment</li>
+                <li>Nous pouvons effectuer une maintenance sans préavis</li>
+                <li>Nous pouvons refuser ou limiter l'accès à tout utilisateur qui viole ces conditions</li>
+                <li>En cas de violation grave, l'accès peut être révoqué immédiatement et définitivement</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2>Paiement et Abonnement (le cas échéant)</h2>
+            <ul>
+                <li>Certains services peuvent être payants</li>
+                <li>Les tarifs peuvent changer à tout moment avec notification préalable</li>
+                <li>Tous les paiements sont non remboursables sauf dispositions légales</li>
+                <li>Vous êtes responsable de tous les frais de votre compte</li>
+                <li>Nous ne stockons pas vos informations bancaires directement</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2>Modification des Conditions</h2>
+            <ul>
+                <li>Nous nous réservons le droit de modifier ces conditions à tout moment</li>
+                <li>Les modifications seront publiées sur cette page</li>
+                <li>Votre utilisation continue de la plateforme vaut acceptation des nouvelles conditions</li>
+                <li>Nous vous encourageons à consulter régulièrement cette page</li>
+            </ul>
+        </section>
+
+        <section class="info-section">
+            <h2> voir plus</h2>
+            
+        </section>
+
+        <section class="info-section">
+            <h2> Contact et Support</h2>
+            <p>Pour toute question concernant ces conditions, veuillez nous contacter :</p>
+            <ul>
+                <li>📧 Email : kandidax0@gmail.com</li>
+                <li>📞 Téléphone : 509 47023167</li>
+            </ul>
+        </section>
+
+        <div class="acceptance-section">
+            <p>
+                En cliquant sur "S'inscrire" lors de l'inscription ou en utilisant la plateforme, vous acceptez 
+                d'être entièrement lié par ces conditions générales.
+            </p>
+        </div>
+    </div>
+</main>
+
+        <footer class="footer">  
+            <h2>Contactez-nous</h2>
+            <p>Des questions ? Contactez nous.</p>
+            <p>Email : kandidax0@gmail.com</p>
+            <p>Telephone : 509 47023167</p>   
+            <a href="{% url 'conditions_generales' %}" class="btn"> Conditions générales </a>
+            <a href="{% url 'confidentialite' %}" class="btn">Politique de confidentialité</a>
+            <div>
+                <p>© 2026 — KandidaX</p>
+            </div>
+        </footer>
+
+<script src="{% static 'quiz_app/plateforme.js' %}"></script>
+<script>
+const menuToggle = document.querySelector(".menu-toggle");
+const nav = document.querySelector(".header nav");
+
+menuToggle.addEventListener("click", function(){
+    if(nav.style.display === "flex"){
+        nav.style.display = "none";
+    } else {
+        nav.style.display = "flex";
+    }
+});
+</script>
+
+</body>
+</html>

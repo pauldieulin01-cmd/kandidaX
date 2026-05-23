@@ -1,0 +1,390 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Niveau {{ level }} — KandidaX</title>
+<link rel="icon" type="image/png" href="{% static 'quiz_app/logo-kandidax.png' %}">
+<link rel="stylesheet" href="{% static 'quiz_app/plateforme.css' %}?v=2">
+<style>
+*{box-sizing:border-box;}
+body{background:#f1f5f9;
+  min-height:100vh;display:flex;flex-direction:column;font-family:'Segoe UI',sans-serif;}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;
+  background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.08);position:sticky;top:0;z-index:50;}
+.topbar .logo{display:inline-flex;align-items:center;flex-shrink:0;}
+.topbar .logo img{display:block;height:46px;width:auto;}
+.topbar nav a{margin-left:20px;font-size:14px;font-weight:500;color:#64748b;transition:color .2s;text-decoration:none;}
+.topbar nav a:hover{color:#2563eb;}
+.menu-toggle{display:none;font-size:24px;cursor:pointer;color:#64748b;}
+
+.quiz-wrap{max-width:720px;width:100%;margin:32px auto;padding:0 16px;flex:1;}
+
+/* Infos niveau */
+.quiz-meta{display:flex;align-items:center;justify-content:space-between;
+  color:#475569;margin-bottom:16px;font-size:14px;}
+.quiz-meta .level-tag{background:#e2e8f0;color:#1e293b;padding:6px 14px;border-radius:99px;font-weight:700;font-size:14px;}
+.quiz-meta .score-tag{font-weight:600;}
+
+/* Progress */
+.prog-outer{height:6px;background:#e2e8f0;border-radius:99px;margin-bottom:24px;overflow:hidden;}
+.prog-inner{height:100%;background:#22c55e;border-radius:99px;transition:width .4s ease;}
+
+/* Carte question */
+.qcard{background:#fff;border-radius:18px;padding:32px;box-shadow:0 8px 24px rgba(15,23,42,.12);
+  animation:slideUp .35s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+.q-numero{font-size:13px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+.q-texte{font-size:20px;font-weight:700;color:#1e293b;line-height:1.45;margin-bottom:24px;}
+
+/* Choix QCM */
+.choix-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.choix{display:flex;align-items:center;gap:14px;padding:14px 18px;border:2px solid #e2e8f0;
+  border-radius:12px;cursor:pointer;transition:all .2s;background:#f8fafc;user-select:none;}
+.choix:hover{border-color:#2563eb;background:#eff6ff;}
+.choix.selected{border-color:#2563eb;background:#dbeafe;}
+.choix.correct{border-color:#22c55e!important;background:#dcfce7!important;}
+.choix.incorrect{border-color:#ef4444!important;background:#fee2e2!important;}
+.choix-lettre{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:13px;background:#e2e8f0;color:#64748b;flex-shrink:0;}
+.choix.selected .choix-lettre{background:#2563eb;color:#fff;}
+.choix.correct .choix-lettre{background:#22c55e;color:#fff;}
+.choix.incorrect .choix-lettre{background:#ef4444;color:#fff;}
+.choix-texte{font-size:16px;color:#1e293b;}
+
+/* VF */
+.vf-group{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.vf-btn{padding:16px;border:2px solid #e2e8f0;border-radius:12px;background:#f8fafc;
+  font-size:17px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
+.vf-btn:hover{border-color:#2563eb;background:#eff6ff;}
+.vf-btn.selected{border-color:#2563eb;background:#dbeafe;color:#1d4ed8;}
+.vf-btn.correct{border-color:#22c55e!important;background:#dcfce7!important;color:#15803d!important;}
+.vf-btn.incorrect{border-color:#ef4444!important;background:#fee2e2!important;color:#b91c1c!important;}
+
+/* OUV */
+.ouv-input{width:100%;padding:14px 16px;border:2px solid #e2e8f0;border-radius:12px;
+  font-size:15px;margin-bottom:16px;font-family:inherit;transition:border .2s;outline:none;}
+.ouv-input:focus{border-color:#2563eb;}
+
+/* Feedback */
+.feedback{padding:14px 18px;border-radius:10px;font-weight:600;font-size:14px;
+  margin-bottom:16px;display:none;line-height:1.5;}
+.feedback.ok{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
+.feedback.ko{background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;}
+
+/* Boutons */
+.btn-row{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:8px;}
+.btn{padding:12px 26px;border-radius:10px;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .2s;}
+.btn-valider{background:#2563eb;color:#fff;}
+.btn-valider:hover{background:#1d4ed8;transform:translateY(-1px);}
+.btn-valider:disabled{background:#93c5fd;cursor:not-allowed;transform:none;}
+.btn-quitter{background:#e2e8f0;color:#334155;}
+.btn-quitter:hover{background:#cbd5e1;}
+.btn-suivant{background:#22c55e;color:#fff;display:none;}
+.btn-suivant:hover{background:#16a34a;}
+.btn-terminer{background:#7c3aed;color:#fff;display:none;}
+.btn-terminer:hover{background:#6d28d9;}
+
+/* Résumé final */
+.resume{text-align:center;padding:16px 0;}
+.resume-score{font-size:56px;font-weight:900;color:#2563eb;}
+.resume-sub{font-size:16px;color:#64748b;margin:8px 0 24px;}
+.resume-pts{font-size:22px;font-weight:700;color:#22c55e;}
+.btn-dashboard{display:inline-block;margin-top:20px;padding:14px 32px;
+  background:#2563eb;color:#fff;border-radius:12px;font-weight:700;font-size:16px;
+  text-decoration:none;transition:all .2s;}
+.btn-dashboard:hover{background:#1d4ed8;transform:translateY(-2px);}
+
+@media(max-width:900px){
+  .menu-toggle{display:block;}
+  .topbar nav{display:none;position:absolute;top:60px;left:0;right:0;
+    flex-direction:column;background:#fff;padding:10px 20px;box-shadow:0 4px 12px rgba(0,0,0,.1);}
+  .topbar nav.open{display:flex;}
+  .topbar nav a{margin:6px 0;font-size:15px;}
+}
+
+@media(max-width:600px){
+  .topbar{padding:14px 20px;}
+  .topbar .logo img{height:38px;}
+  .qcard{padding:22px 18px;}
+  .q-texte{font-size:16px;}
+  .choix-texte{font-size:14px;}
+  .vf-group{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="{% url 'accueil' %}" class="logo" aria-label="KandidaX - retour a l'accueil">
+    <img src="{% static 'quiz_app/logo-kandidax.png' %}" alt="Logo KandidaX">
+  </a>
+  <div class="menu-toggle" onclick="this.nextElementSibling.classList.toggle('open')">☰</div>
+  <nav>
+    <a href="{% url 'accueil' %}">Accueil</a>
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'dissertations' %}">Tuteur IA</a>
+    <a href="{% url 'deconnexion' %}">Déconnexion</a>
+  </nav>
+</header>
+
+<div class="quiz-wrap">
+
+  <div class="quiz-meta">
+    <span class="level-tag">⭐ Niveau {{ level }} — {{ level_nom }}</span>
+    <span class="score-tag" id="score-display">Score : 0 / {{ questions|length }}</span>
+  </div>
+
+  <div class="prog-outer">
+    <div class="prog-inner" id="prog" style="width:0%"></div>
+  </div>
+
+  <!-- ZONE QUIZ -->
+  <div id="quiz-zone">
+    <div class="qcard" id="qcard"></div>
+  </div>
+
+</div>
+
+<!-- Données JSON des questions -->
+<script>
+const QUIZ_ID  = {{ quiz.id }};
+const CSRF     = '{{ csrf_token }}';
+const TOTAL    = {{ questions|length }};
+const QUESTIONS = [
+  {% for q in questions %}
+  {
+    id:   {{ q.id }},
+    texte: "{{ q.texte|escapejs }}",
+    type: "{{ q.type_question }}",
+    {% if q.type_question == "QCM" %}
+    choix: [
+      {lettre:"A", texte:"{{ q.choix_a|escapejs }}"},
+      {lettre:"B", texte:"{{ q.choix_b|escapejs }}"},
+      {lettre:"C", texte:"{{ q.choix_c|escapejs }}"},
+      {lettre:"D", texte:"{{ q.choix_d|escapejs }}"},
+    ],
+    {% endif %}
+  },
+  {% endfor %}
+];
+
+// ─── STATE ────────────────────────────────────────────────
+let idx      = 0;
+let score    = 0;
+let answered = false;
+let reponse  = null;
+let quizClosed = false;
+
+// ─── RENDER ───────────────────────────────────────────────
+function renderQuestion() {
+  answered = false;
+  reponse  = null;
+
+  if (idx >= QUESTIONS.length) { renderFin(); return; }
+
+  const q = QUESTIONS[idx];
+  updateProgress();
+
+  let html = `
+    <div class="q-numero">Question ${idx+1} sur ${TOTAL}</div>
+    <div class="q-texte">${escHtml(q.texte)}</div>
+  `;
+
+  if (q.type === 'QCM') {
+    html += '<div class="choix-list" id="choix-list">';
+    q.choix.forEach(c => {
+      if (!c.texte) return;
+      html += `
+        <div class="choix" data-val="${c.lettre}" onclick="selectChoix(this,'${c.lettre}')">
+          <div class="choix-lettre">${c.lettre}</div>
+          <div class="choix-texte">${escHtml(c.texte)}</div>
+        </div>`;
+    });
+    html += '</div>';
+
+  } else if (q.type === 'VF') {
+    html += `
+      <div class="vf-group">
+        <div class="vf-btn" onclick="selectVF(this,'true')">✓ Vrai</div>
+        <div class="vf-btn" onclick="selectVF(this,'false')">✗ Faux</div>
+      </div>`;
+
+  } else {
+    html += `
+      <input id="ouv-input" class="ouv-input" placeholder="Votre réponse..."
+        oninput="reponse=this.value">`;
+  }
+
+  html += `
+    <div class="feedback" id="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-quitter" onclick="quitterQuiz()">Quitter</button>
+      <button class="btn btn-valider" id="btn-v" onclick="valider()">Valider</button>
+      <button class="btn btn-suivant" id="btn-s" onclick="suivant()">Suivant →</button>
+      <button class="btn btn-terminer" id="btn-t" onclick="terminer()">Terminer le quiz</button>
+    </div>`;
+
+  document.getElementById('qcard').innerHTML = html;
+  document.getElementById('qcard').style.animation = 'none';
+  requestAnimationFrame(() => {
+    document.getElementById('qcard').style.animation = '';
+  });
+}
+
+function selectChoix(el, val) {
+  if (answered) return;
+  document.querySelectorAll('.choix').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  reponse = val;
+}
+
+function selectVF(el, val) {
+  if (answered) return;
+  document.querySelectorAll('.vf-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  reponse = val;
+}
+
+async function valider() {
+  if (answered) return;
+  if (reponse === null || reponse === '') { alert('Choisissez une réponse !'); return; }
+
+  answered = true;
+  document.getElementById('btn-v').disabled = true;
+
+  const res = await fetch('/api/reponse/', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','X-CSRFToken': CSRF},
+    body: JSON.stringify({quiz_id: QUIZ_ID, question_id: QUESTIONS[idx].id, reponse})
+  });
+  const data = await res.json();
+
+  const fb   = document.getElementById('feedback');
+  const last = idx === TOTAL - 1;
+
+  if (data.correct) {
+    score++;
+    fb.className = 'feedback ok';
+    fb.textContent = '✅ Bonne réponse ! +2 points';
+    markAnswer(true, null);
+  } else {
+    fb.className = 'feedback ko';
+    let msg = '❌ Mauvaise réponse.';
+    if (data.bonne_reponse) {
+      msg += ` La bonne réponse était : <strong>${escHtml(data.bonne_reponse)}</strong>`;
+    }
+    fb.innerHTML = msg;
+    markAnswer(false, data.bonne_reponse);
+  }
+  fb.style.display = 'block';
+  document.getElementById('score-display').textContent = `Score : ${score} / ${TOTAL}`;
+
+  setTimeout(() => {
+    document.getElementById('btn-v').style.display = 'none';
+    if (last) {
+      document.getElementById('btn-t').style.display = 'inline-block';
+    } else {
+      document.getElementById('btn-s').style.display = 'inline-block';
+    }
+  }, 1200);
+}
+
+function markAnswer(correct, bonneReponse) {
+  const q = QUESTIONS[idx];
+  if (q.type === 'QCM') {
+    document.querySelectorAll('.choix').forEach(el => {
+      if (el.dataset.val === reponse) {
+        el.classList.add(correct ? 'correct' : 'incorrect');
+      }
+      // Montrer aussi la bonne réponse si l'étudiant s'est trompé
+      if (!correct && bonneReponse && el.dataset.val === bonneReponse.charAt(0)) {
+        el.classList.add('correct');
+      }
+    });
+  } else if (q.type === 'VF') {
+    const isTrue = bonneReponse === 'true' || bonneReponse === 'True';
+    document.querySelectorAll('.vf-btn').forEach(el => {
+      if (el.classList.contains('selected')) {
+        el.classList.add(correct ? 'correct' : 'incorrect');
+      }
+      // Montrer la bonne réponse
+      if (!correct && (
+        (isTrue && el.textContent.includes('Vrai')) || 
+        (!isTrue && el.textContent.includes('Faux'))
+      )) {
+        el.classList.add('correct');
+      }
+    });
+  }
+}
+
+function suivant() { idx++; renderQuestion(); }
+
+function terminer() {
+  quizClosed = true;
+  window.location.href = `/quiz/${QUIZ_ID}/finaliser/`;
+}
+
+async function quitterQuiz() {
+  if (quizClosed) {
+    window.location.href = '/dashboard/';
+    return;
+  }
+
+  quizClosed = true;
+  try {
+    await fetch(`/quiz/${QUIZ_ID}/quitter/`, {
+      method: 'POST',
+      headers: {'X-CSRFToken': CSRF},
+      keepalive: true,
+    });
+  } catch (e) {
+    // On redirige même en cas d'échec réseau local
+  }
+  window.location.href = '/dashboard/';
+}
+
+function renderFin() {
+  const pts = score * 2;
+  document.getElementById('quiz-zone').innerHTML = `
+    <div class="qcard">
+      <div class="resume">
+        <div style="font-size:48px;margin-bottom:8px;">🎉</div>
+        <div class="resume-score">${score} / ${TOTAL}</div>
+        <div class="resume-sub">questions correctes</div>
+        <div class="resume-pts">+${pts} points gagnés</div>
+        <a class="btn-dashboard" href="/quiz/${QUIZ_ID}/finaliser/">
+          Voir mon résultat →
+        </a>
+      </div>
+    </div>`;
+}
+
+function updateProgress() {
+  const pct = Math.round(idx / TOTAL * 100);
+  document.getElementById('prog').style.width = pct + '%';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+// INIT
+renderQuestion();
+
+// Sauvegarde automatique si l'utilisateur ferme/recharge la page
+window.addEventListener('beforeunload', function () {
+  if (quizClosed) return;
+  quizClosed = true;
+  const formData = new FormData();
+  formData.append('csrfmiddlewaretoken', CSRF);
+  navigator.sendBeacon(`/quiz/${QUIZ_ID}/quitter/`, formData);
+});
+</script>
+</body>
+</html>

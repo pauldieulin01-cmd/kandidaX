@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KandidaX</title>
+    <link rel="icon" type="image/png" href="{% static 'quiz_app/logo-kandidax.png' %}">
+    <link rel="stylesheet" href="{% static 'quiz_app/plateforme.css' %}?v=20260501-1">
+</head>
+<body>
+
+<header class="header">
+    <a href="{% url 'accueil' %}" class="logo" aria-label="KandidaX - retour a l'accueil">
+        <img src="{% static 'quiz_app/logo-kandidax.png' %}" alt="Logo KandidaX">
+    </a>
+    <div class="menu-toggle">☰</div>
+    <nav>
+        <a href="{% url 'accueil' %}">Accueil</a>
+        <a href="{% url 'accueil' %}#apropos">À propos</a>
+       {% if user.is_authenticated %}
+        {% endif %}        <a href="{% url 'connexion' %}">Connexion</a>
+        <a href="{% url 'inscription' %}" class="btn-primary">S’inscrire</a>
+    </nav>
+</header>
+
+<section class="auth-hero">
+    <div class="auth-overlay"></div>
+    <div class="auth-card">
+        <h2>Bienvenue </h2>
+        <p>Connectez-vous pour continuer votre préparation au concours</p>
+
+        <!-- Formulaire avec autocomplete off et id pour reset -->
+        <form method="POST" action="{% url 'connexion' %}" autocomplete="off" id="loginForm">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-primary">Se connecter</button>
+        </form>
+
+        <div class="auth-links">
+            <span>Pas encore de compte ?</span>
+            <a href="{% url 'inscription' %}">S’inscrire gratuitement</a>
+        </div>
+    </div>
+</section>
+
+        <footer class="footer">  
+            <h2>Contactez-nous</h2>
+            <p>Des questions ? Contactez nous.</p>
+            <p>Email : kandidax0@gmail.com</p>
+            <p>Telephone : 509 47023167</p>   
+            <a href="{% url 'conditions_generales' %}" class="btn"> Conditions générales </a>
+            <a href="{% url 'confidentialite' %}" class="btn">Politique de confidentialité</a>
+            <div>
+               <p>© 2026 — KandidaX. Tous droits réservés</p>
+            </div>
+        </footer>
+
+<script>
+    // Menu responsive
+    const menuToggle = document.querySelector(".menu-toggle");
+    const nav = document.querySelector(".header nav");
+    menuToggle.addEventListener("click", function(){
+        if(nav.style.display === "flex"){
+            nav.style.display = "none";
+        } else {
+            nav.style.display = "flex";
+        }
+    });
+
+    // Reset formulaire pour vider username/password
+    window.addEventListener('load', function() {
+        const form = document.getElementById('loginForm');
+        if(form) form.reset();
+    });
+</script>
+
+<script src="{% static 'quiz_app/plateforme.js' %}"></script>
+</body>
+</html>

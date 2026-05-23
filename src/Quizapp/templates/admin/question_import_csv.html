@@ -1,0 +1,113 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Importer des questions{% endblock %}
+
+{% block content %}
+<div id="content-main" style="color: #000;">
+    <h1>📥 Importer des questions depuis un CSV</h1>
+    
+    <div style="margin: 20px 0; padding: 20px; background: #f0f7ff; border-left: 4px solid #2196f3; border-radius: 4px; color: #000;">
+        <h2 style="margin-top: 0; color: #1976d2;">📋 Format du CSV requis:</h2>
+        <p style="font-family: monospace; background: #f5f5f5; padding: 15px; border-radius: 4px; overflow-x: auto; color: #000; border: 1px solid #ddd;">
+matiere,texte,type_question,difficulte,niveau_requis,choix_a,choix_b,choix_c,choix_d,reponse_correcte
+        </p>
+        
+        <h3>Explication des colonnes:</h3>
+        <table style="width: 100%; border-collapse: collapse; color: #000;">
+            <tr style="background: #e3f2fd;">
+                <th style="padding: 10px; text-align: left; border: 1px solid #90caf9; color: #000;">Colonne</th>
+                <th style="padding: 10px; text-align: left; border: 1px solid #90caf9; color: #000;">Description</th>
+                <th style="padding: 10px; text-align: left; border: 1px solid #90caf9; color: #000;">Exemple</th>
+            </tr>
+            <tr style="background: #fff;">
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;"><strong>matiere</strong></td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">Nom de la matière</td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">Mathématiques</td>
+            </tr>
+            <tr style="background: #f5f5f5;">
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;"><strong>texte</strong></td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">Texte de la question</td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">Quel est 2+2?</td>
+            </tr>
+            <tr style="background: #fff;">
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;"><strong>type_question</strong></td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">QCM, VF ou OUV</td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">QCM</td>
+            </tr>
+            <tr style="background: #f5f5f5;">
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;"><strong>difficulte</strong></td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">1-7 (Facile à Expert)</td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">2</td>
+            </tr>
+            <tr style="background: #fff;">
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;"><strong>niveau_requis</strong></td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">1-9 (Débutant à Immortel)</td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">1</td>
+            </tr>
+            <tr style="background: #f5f5f5;">
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;"><strong>choix_a/b/c/d</strong></td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">Réponses possibles (QCM seulement)</td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">3</td>
+            </tr>
+            <tr style="background: #fff;">
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;"><strong>reponse_correcte</strong></td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">Pour QCM: A ou A,B ou A,B,D. Pour VF: true/false. Pour OUV: rép. attendue</td>
+                <td style="padding: 10px; border: 1px solid #90caf9; color: #000;">C ou A,C</td>
+            </tr>
+        </table>
+        
+        <h3 style="margin-top: 20px;">📌 Exemples de CSV:</h3>
+        <strong style="color: #000;">QCM (une seule réponse):</strong>
+        <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; color: #000; border: 1px solid #ddd;">
+matiere,texte,type_question,difficulte,niveau_requis,choix_a,choix_b,choix_c,choix_d,reponse_correcte
+Français,Quel auteur a écrit "Les Misérables"?,QCM,2,1,Victor Hugo,Alexandre Dumas,Honoré Balzac,Gustave Flaubert,A
+        </pre>
+        
+        <strong style="color: #000;">QCM (plusieurs réponses):</strong>
+        <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; color: #000; border: 1px solid #ddd;">
+matiere,texte,type_question,difficulte,niveau_requis,choix_a,choix_b,choix_c,choix_d,reponse_correcte
+Science,Quels sont les gaz du air atmosphérique?,QCM,3,2,Azote,Oxygène,Dioxyde de carbone,Hydrogène,A,B,C
+        </pre>
+        
+        <strong style="color: #000;">Vrai/Faux:</strong>
+        <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; color: #000; border: 1px solid #ddd;">
+matiere,texte,type_question,difficulte,niveau_requis,choix_a,choix_b,choix_c,choix_d,reponse_correcte
+SVT,L'eau bout à 100°C au niveau de la mer,VF,1,1,,,,,true
+        </pre>
+        
+        <strong style="color: #000;">Réponse ouverte:</strong>
+        <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; color: #000; border: 1px solid #ddd;">
+matiere,texte,type_question,difficulte,niveau_requis,choix_a,choix_b,choix_c,choix_d,reponse_correcte
+Histoire,Quelle année l'homme a-t-il marché sur la lune?,OUV,1,1,,,,,1969
+        </pre>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data" style="margin: 20px 0; padding: 20px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px;">
+        {% csrf_token %}
+        <label for="csv_file" style="display: block; margin-bottom: 10px; font-weight: bold; color: #000;">Sélectionnez votre fichier CSV:</label>
+        <input type="file" name="csv_file" id="csv_file" accept=".csv" required style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 300px; background: white; color: #000;">
+        <button type="submit" style="padding: 10px 20px; margin-left: 10px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">📤 Importer</button>
+    </form>
+    
+    <div style="margin: 20px 0; padding: 20px; background: #fff9c4; border-left: 4px solid #fbc02d; border-radius: 4px;">
+        <h3 style="margin-top: 0; color: #f57f17;">⚠️ Important:</h3>
+        <ul style="color: #000;">
+            <li>Enregistrez votre fichier en format <strong>CSV</strong> (avec séparateur virgule)</li>
+            <li>L'en-tête CSV doit correspondre exactement aux noms des colonnes</li>
+            <li>Pour les réponses multiples, séparez les réponses correctes par des virgules: <code>A,B,C</code></li>
+            <li>Les matières non existantes seront créées automatiquement</li>
+            <li>Les lignes avec erreurs seront ignorées</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    h1 { color: #1976d2; border-bottom: 3px solid #2196f3; padding-bottom: 10px; }
+    h2 { color: #1976d2; margin-top: 20px; }
+    h3 { color: #424242; }
+    table th { background: #e3f2fd; }
+    pre { font-size: 12px; }
+    code { background: #f5f5f5; padding: 3px 6px; border-radius: 3px; font-family: monospace; color: #000; border: 1px solid #ddd; }
+</style>
+{% endblock %}

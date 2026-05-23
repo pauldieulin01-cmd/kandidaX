@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KandidaX</title>
+    <link rel="icon" type="image/png" href="{% static 'quiz_app/logo-kandidax.png' %}">
+    <link rel="stylesheet" href="{% static 'quiz_app/plateforme.css' %}?v=20260501-1">
+</head>
+<body>
+
+<header class="header">
+    <a href="{% url 'accueil' %}" class="logo" aria-label="KandidaX - retour a l'accueil">
+        <img src="{% static 'quiz_app/logo-kandidax.png' %}" alt="Logo KandidaX">
+    </a>
+    <div class="menu-toggle">☰</div>
+    <nav>
+        <a href="{% url 'accueil' %}">Accueil</a>
+        
+        <a href="{% url 'accueil' %}#apropos">À propos</a>
+        {% if user.is_authenticated %}
+        {% endif %}        <a href="{% url 'connexion' %}">Connexion</a>
+        <a href="{% url 'inscription' %}" class="btn-primary">S’inscrire</a>
+    </nav>
+</header>
+<div id="backdrop" class="backdrop"></div>
+<!-- CONTACT -->
+
+<section id="contact" class="toggle-section">
+    <h2>Contactez-nous</h2>
+    <p>📧 Email : kandidax0@gmail.com</p>
+    <p>📞 Téléphone : 509 47023167</p>
+</section>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="overlay"></div>
+    <div class="hero-content">
+        <h1>KandidaX est la plateforme de référence pour réussir les concours d’entrée dans l'UEH ainsi qu’aux universités publiques en Haïti</h1>
+        <p>Préparez efficacement votre concours d’entrée à l’université et avec un accompagnement personnalisé par un tuteur IA.</p>
+        <div class="actions">
+            <a href="{% url 'connexion' %}" class="btn-primary">Commencer le test</a>
+            <a href="{% url 'connexion' %}" class="btn-primary">Découvrir les cours</a>
+        </div>
+    </div>
+</section>
+
+<!-- FONCTIONNALITÉS -->
+<section class="features" id="features">
+    <h2>Pourquoi utiliser notre plateforme ?</h2>
+    <div class="cards">
+        <div class="card">
+            <h3>📘 Tests interactifs</h3>
+            <p>Entraînez-vous avec des questions inspirées des concours officiels et des sujets passés.</p>
+        </div>
+        <div class="card">
+            <h3>📊 Suivi de progression</h3>
+            <p>Analysez vos résultats et améliorez progressivement vos performances.</p>
+        </div>
+        <div class="card">
+            <h3>🧭 Conseils d’orientation</h3>
+            <p>Recevez des conseils adaptés pour choisir votre filière universitaire.</p>
+        </div>
+        <div class="card">
+            <h3>🤖 Tuteur IA</h3>
+            <p>Discutez avec notre tuteur IA pour obtenir un plan de dissertation, des idées et des conseils de méthode.</p>
+        </div>
+    </div>
+</section>
+
+<!-- A PROPOS INTEGRE A L'ACCUEIL -->
+<section id="apropos" class="home-about">
+    <article class="home-about-shell">
+        <header class="home-about-header">
+            <h1>
+                Cette plateforme accompagne les élèves de la NS4 dans la préparation aux examens d’entrée 
+                de l’UEH ainsi qu’aux universités publiques. Notre approche combine un entraînement ciblé, 
+                une progression par niveaux et un suivi clair des performances
+            </h1>
+            <ul class="home-metrics">
+                <li><strong>9 niveaux</strong><span>de progression</span></li>
+                <li><strong>7 matières</strong><span>essentielles couvertes</span></li>
+                <li><strong>100%</strong><span>oriente concours</span></li>
+            </ul>
+        </header>
+
+        <div class="home-about-grid">
+            <section class="about-panel">
+                <h3>Nos Objectifs</h3>
+                <ul class="objectives-list">
+                    <li>Fournir des tests de qualité couvrant toutes les disciplines exigées</li>
+                    <li>Offrir un environnement d'apprentissage interactif et motivant</li>
+                    <li>Suivre la progression avec un système de niveaux gradués</li>
+                    <li>Faciliter l'accès à l'éducation supérieure en Haïti</li>
+                    <li>Créer une communauté d'apprenants solidaires</li>
+                </ul>
+            </section>
+
+             <section class="about-panel">
+                <h3>Comment ça marche</h3>
+                <ol class="process-list">
+                    <li>Inscrivez-vous gratuitement sur la plateforme</li>
+                    <li>Connectez-vous et choisissez une matière</li>
+                    <li>Répondez à des questions adaptées à votre niveau</li>
+                    <li>Obtenez des points et progressez dans les niveaux</li>
+                    <li>Accédez à des questions plus difficiles en montant de niveau</li>
+                    <li>Suivez votre classement et votre progression</li>
+                </ol>
+            </section>
+
+        </div>
+    </article>
+</section>
+
+
+<!-- MATIÈRES -->
+<section class="subjects">
+    <h2>Matières disponibles</h2>
+    <ul class="subjects-list">
+        <li>Mathématiques</li>
+        <li>Physique</li>
+        <li>Chimie</li>
+        <li>SVT</li>
+        <li>Français</li>
+        <li>Culture générale</li>
+        <li>Philosophie</li>
+    </ul>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+    <h2>Commencez votre préparation dès aujourd’hui</h2>
+    <a href="{% url 'inscription' %}" class="btn-primary" id="startBtn">S’inscrire gratuitement</a>
+</section>
+       
+        <footer class="footer">  
+            <h2>Contactez-nous</h2>
+            <p>Des questions ? Contactez nous.</p>
+            <p>Email : kandidax0@gmail.com</p>
+            <p>Telephone : 509 47023167</p>   
+            <a href="{% url 'conditions_generales' %}" class="btn"> Conditions générales </a>
+            <a href="{% url 'confidentialite' %}" class="btn">Politique de confidentialité</a>
+            <div>
+                <p>© 2026 — KandidaX. Tous droits réservés</p>
+            </div>
+        </footer>
+<script>
+    // Menu responsive
+    const menuToggle = document.querySelector(".menu-toggle");
+    const nav = document.querySelector(".header nav");
+    menuToggle.addEventListener("click", function(){
+        if(nav.style.display === "flex"){
+            nav.style.display = "none";
+        } else {
+            nav.style.display = "flex";
+        }
+    });
+
+    // Reset formulaire pour vider username/password
+    window.addEventListener('load', function() {
+        const form = document.getElementById('loginForm');
+        if(form) form.reset();
+    });
+</script>
+
+<script src="{% static 'quiz_app/plateforme.js' %}"></script>
+</body>
+</html>
